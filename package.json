@@ -1,0 +1,22 @@
+{
+  "name": "planning-poker",
+  "version": "1.0.0",
+  "description": "a tool to work on planning poker",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jiefmoreno/planningPoker.git"
+  },
+  "author": "jiefmoreno",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jiefmoreno/planningPoker/issues"
+  },
+  "homepage": "https://github.com/jiefmoreno/planningPoker#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
