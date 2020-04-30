@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>session</title>
+</head>
+
+<body>
+
+  <input id="ticket-id" placeholder="new ticket id" />
+  <button id="add-ticket">add a new ticket</button>
+  <div id="list"></div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io();
+    var sessionObject = {};
+    var sessionId = window.location.pathname.split('/').pop();
+
+    var list = document.getElementById('list');
+    socket.on(sessionId + ' changed', session => {
+      constructList(session);
+    });
+    var addTicketButton = document.getElementById('add-ticket');
+    addTicketButton.onclick = () => {
+      var input = document.getElementById('ticket-id');
+      if (input.value) {
+        socket.emit('new ticket', sessionId, input.value);
+      }
+    }
+
+    function constructList(session) {
+      list.innerHTML = '';
+      session.tickets.map(ticket => {
+        var ticketElement = document.createElement('details');
+        ticketElement.id = ticket.ticketName;
+        var summary = document.createElement('summary');
+        summary.innerText = ticket.ticketName;
+        ticketElement.appendChild(summary);
+        var ratingInput = document.createElement('input');
+        ratingInput.placeholder = "rating";
+        ticketElement.appendChild(ratingInput);
+        list.appendChild(ticketElement);
+      })
+    }
+    if (sessionId) {
+      fetch('/api/session/' + sessionId)
+        .then(resp => resp.json())
+        .then(({ session }) => {
+          sessionObject = session;
+          constructList(session);
+        });
+    }
+  </script>
+</body>
+
+</html>
