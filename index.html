@@ -8,8 +8,8 @@
 </head>
 
 <body>
-  <button id="create-session">Create a session</button>
   <input id="session-id" placeholder="session name" />
+  <input id="user-name" placeholder="user name" />
   <button id="join-session">join session</button>
   <script src="/socket.io/socket.io.js"></script>
   <script>
@@ -17,11 +17,14 @@
     var joinButton = document.getElementById('join-session');
     joinButton.onclick = () => {
       var sessionInput = document.getElementById('session-id');
+      var userNameInput = document.getElementById('user-name');
       var sessionName = sessionInput && sessionInput.value;
+      var userName = userNameInput && userNameInput.value;
       if (!sessionName) window.alert('no session name');
+      else if (!userName) window.alert('no user name');
       else {
-        socket.emit('new session', sessionName);
-        window.location.assign('/session/' + sessionName);
+        socket.emit('new session', sessionName, userName);
+        window.location.assign('/session/' + sessionName + '/' + userName);
       }
     }
   </script>

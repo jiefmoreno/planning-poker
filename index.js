@@ -7,7 +7,7 @@ const sessions = {};
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
-app.get('/session/:sessionId', (req, res) => {
+app.get('/session/:sessionId/:userName', (req, res) => {
   res.sendFile(__dirname + '/session.html');
 });
 app.get('/api/session/:sessionId', (req, res) => {
@@ -21,22 +21,46 @@ app.get('/api/session/:sessionId', (req, res) => {
 io.on('connection', (socket) => {
   socket.on('disconnect', () => {
   });
-  socket.on('new session', sessionName => {
-    sessions[sessionName] = { tickets: [], users: [] };
+  socket.on('new session', (sessionName, userName) => {
+    if (sessions[sessionName]) return;
+    sessions[sessionName] = { tickets: [] };
   });
-  socket.on('new user', (sessionName, userName) => {
-    sessions[sessionName].add(userName);
+  socket.on('join room', (sessionName, userName) => {
+    socket.join(sessionName);
+    socket.nickName = userName;
   });
-  socket.on('new ticket', (sessionId, ticketName) => {
-    if (sessions[sessionId] && !sessions[sessionId].tickets.find(({ ticketName: name }) => name === ticketName)) {
-      sessions[sessionId].tickets.push({ ticketName, notes: {} });
-      socket.emit(sessionId + ' changed', sessions[sessionId]);
+  socket.on('new ticket', (sessionId, ticketName, userName) => {
+    if (
+      sessions[sessionId] &&
+      !sessions[sessionId].tickets.find(({ ticketName: name }) => name === ticketName)
+    ) {
+      sessions[sessionId].tickets.push({ ticketName, notes: {}, status: 'inProgress', admin: userName });
+      io.sockets.to(sessionId).emit('changed', sessions[sessionId]);
     }
   });
   socket.on('add notes', (sessionId, ticketName, userName, notes) => {
-    sessions[sessionId][ticketName].notes[userName] = notes;
-    if (sessions[sessionId][ticketName].notes.length === sessions[sessionId].users.length) {
-      socket.emit('all noted', { sessionId, ticketName, notes: sessions[sessionId][ticketName].notes });
+    const ticket = sessions[sessionId].tickets.find(({ ticketName: name }) => name === ticketName);
+    if (ticket) {
+      ticket.notes[userName] = notes;
+      const room = io.sockets.adapter.rooms[sessionId];
+      if (room.length <= Object.keys(ticket.notes).length) {
+        ticket.status = 'allNoted';
+        io.sockets.to(sessionId).emit('all noted', {
+          ...ticket,
+          sessionId,
+        });
+      }
+    }
+  });
+  socket.on('validate notes', (sessionId, ticketName, notes) => {
+    const ticket = sessions[sessionId].tickets.find(({ ticketName: name }) => name === ticketName);
+    if (ticket && ticket.admin === socket.nickName) {
+      ticket.validatedNotes = notes;
+      ticket.status = 'validated';
+      io.sockets.to(sessionId).emit('validated', {
+        ...ticket,
+        sessionId,
+      });
     }
   });
 });
