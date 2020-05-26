@@ -44,20 +44,26 @@
     function constructNotesTable(ticket) {
       const ticketElement = document.getElementById(ticket.ticketName);
       let tableElement = document.getElementById(`${ticket.ticketName}-table`);
-      const sum = Object.values(ticket.notes).reduce((acc, note) => ({
-        ba: acc.ba + parseInt(note.ba, 10),
-        backend: acc.backend + parseInt(note.backend, 10),
-        frontend: acc.frontend + parseInt(note.frontend, 10),
-        tests: acc.tests + parseInt(note.tests, 10),
-      }), {
-        ba: 0, backend: 0, frontend: 0, tests: 0,
+      const notes = Object.values(ticket.notes).reduce((acc, note) => {
+        if (!isNaN(parseInt(note.ba, 10))) acc.ba.push(parseInt(note.ba, 10));
+        if (!isNaN(parseInt(note.backend, 10))) acc.backend.push(parseInt(note.backend, 10));
+        if (!isNaN(parseInt(note.frontend, 10))) acc.frontend.push(parseInt(note.frontend, 10));
+        if (!isNaN(parseInt(note.tests, 10))) acc.tests.push(parseInt(note.tests, 10));
+        return acc;
+      }, {
+        ba: [],
+        backend: [],
+        frontend: [],
+        tests: [],
       });
-      const notesLength = Object.keys(ticket.notes).length;
+
+      console.log('=> (: constructNotesTable -> notes', notes)
+      const sum = arr => arr.reduce((acc, val) => acc + val, 0);
       const average = {
-        ba: sum.ba / notesLength,
-        backend: sum.backend / notesLength,
-        frontend: sum.frontend / notesLength,
-        tests: sum.tests / notesLength,
+        ba: sum(notes.ba) / notes.ba.length,
+        backend: sum(notes.backend) / notes.backend.length,
+        frontend: sum(notes.frontend) / notes.frontend.length,
+        tests: sum(notes.tests) / notes.tests.length,
       }
 
       if (!tableElement) {
