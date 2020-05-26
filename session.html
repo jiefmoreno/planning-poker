@@ -128,24 +128,28 @@
         var ratingBAInput = document.createElement('input');
         ratingBAInput.placeholder = "rating BA validated";
         ratingBAInput.id = `${ticket.ticketName}-ba-validated`;
+        ratingBAInput.type = "number";
         ratingBAInput.value = average.ba;
         baAvTitleElement.appendChild(ratingBAInput);
 
         var ratingBackEndInput = document.createElement('input');
         ratingBackEndInput.id = `${ticket.ticketName}-backend-validated`;
         ratingBackEndInput.placeholder = "rating Backend validated";
+        ratingBackEndInput.type = "number";
         ratingBackEndInput.value = average.backend;
         beAvTitleElement.appendChild(ratingBackEndInput);
 
         var ratingFrontEndInput = document.createElement('input');
         ratingFrontEndInput.id = `${ticket.ticketName}-frontend-validated`;
         ratingFrontEndInput.placeholder = "rating Frontend validated";
+        ratingFrontEndInput.type = "number";
         ratingFrontEndInput.value = average.frontend;
         feAvTitleElement.appendChild(ratingFrontEndInput);
 
         var ratingTestsInput = document.createElement('input');
         ratingTestsInput.id = `${ticket.ticketName}-tests-validated`;
         ratingTestsInput.placeholder = "rating Tests validated";
+        ratingTestsInput.type = "number";
         ratingTestsInput.value = average.tests;
         testsAvTitleElement.appendChild(ratingTestsInput);
 
@@ -190,26 +194,30 @@
 
         var ratingBAInput = document.createElement('input');
         ratingBAInput.placeholder = "rating BA";
+        ratingBAInput.type = "number";
         ratingBAInput.id = `${ticket.ticketName}-ba`;
         ticketElement.appendChild(ratingBAInput);
 
         var ratingBackEndInput = document.createElement('input');
         ratingBackEndInput.id = `${ticket.ticketName}-backend`;
         ratingBackEndInput.placeholder = "rating Backend";
+        ratingBackEndInput.type = "number";
         ticketElement.appendChild(ratingBackEndInput);
 
         var ratingFrontEndInput = document.createElement('input');
         ratingFrontEndInput.id = `${ticket.ticketName}-frontend`;
         ratingFrontEndInput.placeholder = "rating Frontend";
+        ratingFrontEndInput.type = "number";
         ticketElement.appendChild(ratingFrontEndInput);
 
         var ratingTestsInput = document.createElement('input');
         ratingTestsInput.id = `${ticket.ticketName}-tests`;
         ratingTestsInput.placeholder = "rating Tests";
+        ratingTestsInput.type = "number";
         ticketElement.appendChild(ratingTestsInput);
 
         var validateRatingButton = document.createElement('button');
-        validateRatingButton.innerHTML = "Validate notes";
+        validateRatingButton.innerHTML = "Propose notes";
         validateRatingButton.onclick = (event) => {
           var notes = {
             ba: document.getElementById(`${ticket.ticketName}-ba`).value,
