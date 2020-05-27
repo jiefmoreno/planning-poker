@@ -198,27 +198,56 @@
         summary.appendChild(summaryNotes);
         ticketElement.appendChild(summary);
 
+        var sel = document.createElement("select");
+            var opt1 = document.createElement("option");
+            var opt2 = document.createElement("option");
+            var opt3 = document.createElement("option");
+            var opt5 = document.createElement("option");
+            var opt8 = document.createElement("option");
+            var opt13 = document.createElement("option");
+
+            opt1.value = "1";
+            opt1.text = "1";
+            opt2.value = "2";
+            opt2.text = "2";
+            opt3.value = "3";
+            opt3.text = "3";
+            opt5.value = "5";
+            opt5.text = "5";
+            opt8.value = "8";
+            opt8.text = "8";
+            opt13.value = "13";
+            opt13.text = "13";
+
+            sel.add(opt1, null);
+            sel.add(opt2, null);
+            sel.add(opt3, null);
+            sel.add(opt5, null);
+            sel.add(opt8, null);
+            sel.add(opt13, null);
+            ticketElement.appendChild(sel);
+
         var ratingBAInput = document.createElement('input');
-        ratingBAInput.placeholder = "rating BA";
+        ratingBAInput.placeholder = "rating BA in hours";
         ratingBAInput.type = "number";
         ratingBAInput.id = `${ticket.ticketName}-ba`;
         ticketElement.appendChild(ratingBAInput);
 
         var ratingBackEndInput = document.createElement('input');
         ratingBackEndInput.id = `${ticket.ticketName}-backend`;
-        ratingBackEndInput.placeholder = "rating Backend";
+        ratingBackEndInput.placeholder = "rating Backend in hours";
         ratingBackEndInput.type = "number";
         ticketElement.appendChild(ratingBackEndInput);
 
         var ratingFrontEndInput = document.createElement('input');
         ratingFrontEndInput.id = `${ticket.ticketName}-frontend`;
-        ratingFrontEndInput.placeholder = "rating Frontend";
+        ratingFrontEndInput.placeholder = "rating Frontend in hours";
         ratingFrontEndInput.type = "number";
         ticketElement.appendChild(ratingFrontEndInput);
 
         var ratingTestsInput = document.createElement('input');
         ratingTestsInput.id = `${ticket.ticketName}-tests`;
-        ratingTestsInput.placeholder = "rating Tests";
+        ratingTestsInput.placeholder = "rating Tests in hours";
         ratingTestsInput.type = "number";
         ticketElement.appendChild(ratingTestsInput);
 
