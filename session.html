@@ -235,7 +235,17 @@
 
     function constructNotesValidated(ticket) {
       const summaryElement = document.getElementById(`${ticket.ticketName}-summary`);
-      summaryElement.innerHTML = ` ba: ${ticket.validatedNotes.ba} backend: ${ticket.validatedNotes.backend} frontend: ${ticket.validatedNotes.frontend} tests: ${ticket.validatedNotes.tests} `;
+      summaryElement.innerHTML = ` <span><b>complexity:</b> ${
+        ticket.validatedNotes.complexity || ' x '
+        }</span><span> <b>ba:</b> ${
+        ticket.validatedNotes.ba || ' -'
+        }hours </span><span><b>backend:</b> ${
+        ticket.validatedNotes.backend || ' -'
+        }hours </span><span><b>frontend:</b> ${
+        ticket.validatedNotes.frontend || ' -'
+        }hours </span><span><b>tests:</b> ${
+        ticket.validatedNotes.tests || ' -'
+        }hours</span>`;
     }
 
     function constructList(session) {
@@ -322,7 +332,6 @@
             frontend: document.getElementById(`${ticket.ticketName}-frontend`).value,
             tests: document.getElementById(`${ticket.ticketName}-tests`).value,
           }
-          console.log('=> (: validateRatingButton.onclick -> notes', notes)
           socket.emit('add notes', sessionId, ticket.ticketName, userName, notes)
         }
         ticketElement.appendChild(validateRatingButton);
