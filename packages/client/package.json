@@ -1,6 +1,6 @@
 {
   "name": "@pointing-poker/client",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "A javascript library that help you communicate with @pointing-poker/server",
   "keywords": [
     "planning",
