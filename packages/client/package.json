@@ -1,14 +1,14 @@
 {
-  "name": "@planning-poker/client",
+  "name": "@pointing-poker/client",
   "version": "0.1.2-alpha.0",
-  "description": "A javascript library that help you communicate with @planning-poker/server",
+  "description": "A javascript library that help you communicate with @pointing-poker/server",
   "keywords": [
     "planning",
     "poker",
     "javascript"
   ],
   "author": "jf-moreno <jiefmoreno@gmail.com>",
-  "homepage": "https://github.com/jiefmoreno/planningPoker/tree/master/packages/client#readme",
+  "homepage": "https://github.com/jiefmoreno/pointing-poker/tree/master/packages/client#readme",
   "license": "MIT",
   "main": "lib/client.js",
   "directories": {
@@ -23,13 +23,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jiefmoreno/planningPoker.git"
+    "url": "git+https://github.com/jiefmoreno/pointing-poker.git"
   },
   "scripts": {
     "tsc": "tsc --sourceMap false",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "bugs": {
-    "url": "https://github.com/jiefmoreno/planningPoker/issues"
-  }
+    "url": "https://github.com/jiefmoreno/pointing-poker/issues"
+  },
+  "gitHead": "cc692e887e14128a67f6819dee0000a5aa001057"
 }

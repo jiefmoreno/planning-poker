@@ -1,5 +1,5 @@
 {
-  "name": "planning-poker",
+  "name": "pointing-poker",
   "version": "0.0.1",
   "description": "a tool to work on planning poker",
   "main": "lib/index.js",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jiefmoreno/planningPoker.git"
+    "url": "git+https://github.com/jiefmoreno/pointing-poker.git"
   },
   "author": "jiefmoreno",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jiefmoreno/planningPoker/issues"
+    "url": "https://github.com/jiefmoreno/pointing-poker/issues"
   },
-  "homepage": "https://github.com/jiefmoreno/planningPoker#readme",
+  "homepage": "https://github.com/jiefmoreno/pointing-poker#readme",
   "dependencies": {
     "express": "^4.17.1"
   },

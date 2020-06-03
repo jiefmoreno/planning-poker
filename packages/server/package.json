@@ -1,5 +1,5 @@
 {
-  "name": "@planning-poker/server",
+  "name": "@pointing-poker/server",
   "version": "0.1.1",
   "description": "A tool that handle planning poker in node.js",
   "keywords": [
@@ -9,7 +9,7 @@
     "node.js"
   ],
   "author": "jf-moreno <jiefmoreno@gmail.com>",
-  "homepage": "https://github.com/jiefmoreno/planningPoker/tree/master/packages/server#readme",
+  "homepage": "https://github.com/jiefmoreno/pointing-poker/tree/master/packages/server#readme",
   "license": "MIT",
   "main": "lib/server.js",
   "directories": {
@@ -24,13 +24,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jiefmoreno/planningPoker.git"
+    "url": "git+https://github.com/jiefmoreno/pointing-poker.git"
   },
   "scripts": {
     "tsc": "tsc --sourceMap false",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "bugs": {
-    "url": "https://github.com/jiefmoreno/planningPoker/issues"
+    "url": "https://github.com/jiefmoreno/pointing-poker/issues"
   }
 }
