@@ -1,0 +1,51 @@
+body {
+    background-image: url(/assets/background.jpg);
+    background-size: cover;
+    background-attachment: fixed;
+  }
+  input {
+    text-align: center;
+    border: 1px solid;
+    border-radius: 4px;
+    width: 12rem;
+    height: 1.3rem;
+    margin: 0.2rem;
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  }
+  button {
+    border-radius: 4px;
+    background-color: #4d0000;
+    color: white;
+    width: 7rem;
+    height: 1.5rem;
+    margin-left: 1rem;
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    align-items: center;
+  }
+  select {
+    text-align: center;
+    border: 1px solid;
+    border-radius: 4px;
+    width: 2.5rem;
+    height: 1.7rem;
+    margin: 0.5rem;
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  }
+  summary {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  }
+  td {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  }
+  th {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  }
+  div {
+    color: #4d0000;
+  }
+  table,
+  tr,
+  td,
+  th {
+    text-align: center;
+  }

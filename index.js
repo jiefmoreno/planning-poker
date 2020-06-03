@@ -1,4 +1,5 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 
@@ -15,8 +16,8 @@ app.get('/api/session/:sessionId', (req, res) => {
   res.json({
     session
   })
-
 });
+app.use(express.static(__dirname+'public'));
 
 io.on('connection', (socket) => {
   socket.on('disconnect', () => {
