@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <input id="session-id" placeholder="session name" />
+  <input id="user-name" placeholder="user name" />
+  <button id="join-session">join session</button>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io();
+    var joinButton = document.getElementById('join-session');
+    joinButton.onclick = () => {
+      var sessionInput = document.getElementById('session-id');
+      var userNameInput = document.getElementById('user-name');
+      var sessionName = sessionInput && sessionInput.value;
+      var userName = userNameInput && userNameInput.value;
+      if (!sessionName) window.alert('no session name');
+      else if (!userName) window.alert('no user name');
+      else {
+        socket.emit('new session', sessionName, userName);
+        window.location.assign('/session/' + sessionName + '/' + userName);
+      }
+    }
+  </script>
+</body>
+
+</html>
