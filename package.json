@@ -1,31 +1,7 @@
 {
-  "name": "pointing-poker",
-  "version": "0.0.1",
-  "description": "a tool to work on planning poker",
-  "main": "lib/index.js",
-  "files": [
-    "lib/"
-  ],
-  "scripts": {
-    "build": "npx lerna run tsc"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jiefmoreno/pointing-poker.git"
-  },
-  "author": "jiefmoreno",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/jiefmoreno/pointing-poker/issues"
-  },
-  "homepage": "https://github.com/jiefmoreno/pointing-poker#readme",
-  "dependencies": {
-    "express": "^4.17.1"
-  },
+  "name": "root",
+  "private": true,
   "devDependencies": {
-    "@types/socket.io": "^2.1.8",
-    "lerna": "^3.22.0",
-    "socket.io": "^2.3.0",
-    "typescript": "^3.9.3"
+    "lerna": "^3.22.0"
   }
 }
