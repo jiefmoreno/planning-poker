@@ -1,7 +1,6 @@
-'use strict';
+import io from 'socket.io-client';
+const socket = io();
 
-module.exports = client;
-
-function client() {
-    // TODO
+export function createSession(sessionName: string, userName: string) {
+    socket.emit('new session', sessionName, userName);
 }
