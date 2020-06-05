@@ -41,9 +41,7 @@ summary {
   font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 }
 details {
-  background-color: #006666;
-}
-details:nth-child(even) {
+  margin: 0.3rem;
   background-color: #017e7e;
 }
 

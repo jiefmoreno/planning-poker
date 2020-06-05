@@ -35,15 +35,20 @@
     }
 
     socket.on('all noted', ticket => {
-      constructNotesTable(ticket);
+      const contentElement = document.getElementById(`${ticket.ticketName}-content`);
+      contentElement.innerHTML = "";
+      constructNotesTable(ticket, true);
     });
 
     socket.on('validated', ticket => {
+      const contentElement = document.getElementById(`${ticket.ticketName}-content`);
+      contentElement.innerHTML = "";
+      constructNotesTable(ticket, false);
       constructNotesValidated(ticket);
     });
 
-    function constructNotesTable(ticket) {
-      const ticketElement = document.getElementById(ticket.ticketName);
+    function constructNotesTable(ticket, toValidate) {
+      const ticketElement = document.getElementById(`${ticket.ticketName}-content`);
       let tableElement = document.getElementById(`${ticket.ticketName}-table`);
       const notes = Object.values(ticket.notes).reduce((acc, note) => {
         if (!isNaN(parseFloat(note.complexity, 10))) acc.complexity = Math.max(acc.complexity, parseFloat(note.complexity, 10));
@@ -140,7 +145,7 @@
       const testsAvTitleElement = document.createElement('td');
       lineAverageElement.appendChild(testsAvTitleElement);
 
-      if (userName === ticket.admin) {
+      if (userName === ticket.admin && toValidate) {
         var selValidated = document.createElement("select");
         selValidated.id = `${ticket.ticketName}-complexity-validated`;
         var optPH = document.createElement("option");
@@ -214,7 +219,7 @@
         }
         validateRatingButton.onclick = () => {
           var notes = {
-            ba: document.getElementById(`${ticket.ticketName}-complexity-validated`).value,
+            complexity: document.getElementById(`${ticket.ticketName}-complexity-validated`).value,
             ba: document.getElementById(`${ticket.ticketName}-ba-validated`).value,
             backend: document.getElementById(`${ticket.ticketName}-backend-validated`).value,
             frontend: document.getElementById(`${ticket.ticketName}-frontend-validated`).value,
@@ -261,88 +266,93 @@
         summaryNotes.id = `${ticket.ticketName}-summary`;
         summary.appendChild(summaryNotes);
         ticketElement.appendChild(summary);
-
-        var sel = document.createElement("select");
-        sel.id = `${ticket.ticketName}-complexity`;
-        var optPH = document.createElement("option");
-        var opt1 = document.createElement("option");
-        var opt2 = document.createElement("option");
-        var opt3 = document.createElement("option");
-        var opt5 = document.createElement("option");
-        var opt8 = document.createElement("option");
-        var opt13 = document.createElement("option");
-        var optInfinity = document.createElement("option");
-
-        optPH.text = "Ticket complexity";
-        optPH.value = "";
-        opt1.value = 1;
-        opt1.text = "1";
-        opt2.value = 2;
-        opt2.text = "2";
-        opt3.value = 3;
-        opt3.text = "3";
-        opt5.value = 5;
-        opt5.text = "5";
-        opt8.value = 8;
-        opt8.text = "8";
-        opt13.value = 13;
-        opt13.text = "13";
-        optInfinity.value = Infinity;
-        optInfinity.text = "Infinity";
-
-        sel.add(optPH);
-        sel.add(opt1);
-        sel.add(opt2);
-        sel.add(opt3);
-        sel.add(opt5);
-        sel.add(opt8);
-        sel.add(opt13);
-        sel.add(optInfinity);
-        ticketElement.appendChild(sel);
-
-        var ratingBAInput = document.createElement('input');
-        ratingBAInput.placeholder = "rating BA in hours";
-        ratingBAInput.type = "number";
-        ratingBAInput.id = `${ticket.ticketName}-ba`;
-        ticketElement.appendChild(ratingBAInput);
-
-        var ratingBackEndInput = document.createElement('input');
-        ratingBackEndInput.id = `${ticket.ticketName}-backend`;
-        ratingBackEndInput.placeholder = "rating Backend in hours";
-        ratingBackEndInput.type = "number";
-        ticketElement.appendChild(ratingBackEndInput);
-
-        var ratingFrontEndInput = document.createElement('input');
-        ratingFrontEndInput.id = `${ticket.ticketName}-frontend`;
-        ratingFrontEndInput.placeholder = "rating Frontend in hours";
-        ratingFrontEndInput.type = "number";
-        ticketElement.appendChild(ratingFrontEndInput);
-
-        var ratingTestsInput = document.createElement('input');
-        ratingTestsInput.id = `${ticket.ticketName}-tests`;
-        ratingTestsInput.placeholder = "rating Tests in hours";
-        ratingTestsInput.type = "number";
-        ticketElement.appendChild(ratingTestsInput);
-
-        var validateRatingButton = document.createElement('button');
-        validateRatingButton.innerHTML = "Propose notes";
-        validateRatingButton.onclick = (event) => {
-          var notes = {
-            complexity: document.getElementById(`${ticket.ticketName}-complexity`).value,
-            ba: document.getElementById(`${ticket.ticketName}-ba`).value,
-            backend: document.getElementById(`${ticket.ticketName}-backend`).value,
-            frontend: document.getElementById(`${ticket.ticketName}-frontend`).value,
-            tests: document.getElementById(`${ticket.ticketName}-tests`).value,
-          }
-          socket.emit('add notes', sessionId, ticket.ticketName, userName, notes)
-        }
-        ticketElement.appendChild(validateRatingButton);
+        var content = document.createElement('div');
+        content.id = `${ticket.ticketName}-content`;
+        content.className = "ticket-content";
+        ticketElement.appendChild(content);
 
         list.appendChild(ticketElement);
-        if (ticket.status === 'allNoted') {
-          constructNotesTable(ticket)
+        if (ticket.status === 'inProgress') {
+          var sel = document.createElement("select");
+          sel.id = `${ticket.ticketName}-complexity`;
+          var optPH = document.createElement("option");
+          var opt1 = document.createElement("option");
+          var opt2 = document.createElement("option");
+          var opt3 = document.createElement("option");
+          var opt5 = document.createElement("option");
+          var opt8 = document.createElement("option");
+          var opt13 = document.createElement("option");
+          var optInfinity = document.createElement("option");
+
+          optPH.text = "Ticket complexity";
+          optPH.value = "";
+          opt1.value = 1;
+          opt1.text = "1";
+          opt2.value = 2;
+          opt2.text = "2";
+          opt3.value = 3;
+          opt3.text = "3";
+          opt5.value = 5;
+          opt5.text = "5";
+          opt8.value = 8;
+          opt8.text = "8";
+          opt13.value = 13;
+          opt13.text = "13";
+          optInfinity.value = Infinity;
+          optInfinity.text = "Infinity";
+
+          sel.add(optPH);
+          sel.add(opt1);
+          sel.add(opt2);
+          sel.add(opt3);
+          sel.add(opt5);
+          sel.add(opt8);
+          sel.add(opt13);
+          sel.add(optInfinity);
+          content.appendChild(sel);
+
+          var ratingBAInput = document.createElement('input');
+          ratingBAInput.placeholder = "rating BA in hours";
+          ratingBAInput.type = "number";
+          ratingBAInput.id = `${ticket.ticketName}-ba`;
+          content.appendChild(ratingBAInput);
+
+          var ratingBackEndInput = document.createElement('input');
+          ratingBackEndInput.id = `${ticket.ticketName}-backend`;
+          ratingBackEndInput.placeholder = "rating Backend in hours";
+          ratingBackEndInput.type = "number";
+          content.appendChild(ratingBackEndInput);
+
+          var ratingFrontEndInput = document.createElement('input');
+          ratingFrontEndInput.id = `${ticket.ticketName}-frontend`;
+          ratingFrontEndInput.placeholder = "rating Frontend in hours";
+          ratingFrontEndInput.type = "number";
+          content.appendChild(ratingFrontEndInput);
+
+          var ratingTestsInput = document.createElement('input');
+          ratingTestsInput.id = `${ticket.ticketName}-tests`;
+          ratingTestsInput.placeholder = "rating Tests in hours";
+          ratingTestsInput.type = "number";
+          content.appendChild(ratingTestsInput);
+
+          var validateRatingButton = document.createElement('button');
+          validateRatingButton.innerHTML = "Propose notes";
+          validateRatingButton.onclick = (event) => {
+            var notes = {
+              complexity: document.getElementById(`${ticket.ticketName}-complexity`).value,
+              ba: document.getElementById(`${ticket.ticketName}-ba`).value,
+              backend: document.getElementById(`${ticket.ticketName}-backend`).value,
+              frontend: document.getElementById(`${ticket.ticketName}-frontend`).value,
+              tests: document.getElementById(`${ticket.ticketName}-tests`).value,
+            }
+            socket.emit('add notes', sessionId, ticket.ticketName, userName, notes)
+          }
+          content.appendChild(validateRatingButton);
+        }
+        else if (ticket.status === 'allNoted') {
+          constructNotesTable(ticket, true)
         } else if (ticket.status === 'validated') {
-          constructNotesTable(ticket)
+          constructNotesTable(ticket, false)
           constructNotesValidated(ticket);
         }
       })
