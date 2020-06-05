@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>session</title>
+  <link rel="stylesheet" href="/static/style.css" type="text/css" />
 </head>
 
 <body>
@@ -250,9 +251,10 @@
 
     function constructList(session) {
       list.innerHTML = '';
-      session.tickets.map(ticket => {
+      session.tickets.map((ticket, index) => {
         var ticketElement = document.createElement('details');
         ticketElement.id = ticket.ticketName;
+        ticketElement.open = ticket.status !== 'validated';
         var summary = document.createElement('summary');
         summary.innerText = ticket.ticketName;
         const summaryNotes = document.createElement('div');
