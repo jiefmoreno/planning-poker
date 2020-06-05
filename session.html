@@ -1,288 +1,372 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>session</title>
-</head>
-
-<body>
-
-  <input id="ticket-id" placeholder="new ticket id" />
-  <button id="add-ticket">add a new ticket</button>
-  <div id="list"></div>
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    var socket = io();
-    var sessionObject = {};
-
-
-    var [sessionId, userName] = window.location.pathname.split('/').slice(-2);
-    socket.emit('join room', sessionId, userName);
-
-    var list = document.getElementById('list');
-    socket.on('changed', session => {
-      constructList(session);
-    });
-    var addTicketButton = document.getElementById('add-ticket');
-    addTicketButton.onclick = () => {
-      var input = document.getElementById('ticket-id');
-      if (input.value) {
-        socket.emit('new ticket', sessionId, input.value, userName);
-      }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>session</title>
+  </head>
+  <style>
+    body {
+      background-color: #009999;
+    }
+    input {
+      border: 2px solid white;
+      border-radius: 20px;
+      height: 2rem;
+      text-align: center;
+      font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+      margin: 0.5rem;
+      background-color: #d1e0e0;
+    }
+    button {
+      border: 2px solid #a3c2c2;
+      border-radius: 15px;
+      height: 2rem;
+      background-color: #a3c2c2;
+      width: 8rem;
+      text-align: center;
+      margin-top: 3rem;
+      font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+      color: #334d4d;
+      cursor: pointer;
     }
 
-    socket.on('all noted', ticket => {
-      constructNotesTable(ticket);
-    });
+    select {
+      text-align: center;
+      border-radius: 15px;
+      width: 3rem;
+      height: 2rem;
+      border: 2px solid white;
+      font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+      padding-left: 0.5rem;
+      background-color: #d1e0e0;
+      cursor: pointer;
+    }
 
-    socket.on('validated', ticket => {
-      constructNotesValidated(ticket);
-    });
+    summary {
+      padding: 4px;
+      border: 2px solid #006666;
+      cursor: pointer;
+      background-color: #006666;
+      color: white;
+      font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    }
+    div {
+      background-color: #006666;
+    }
+    table {
+      color: white;
+      font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+      text-align: center;
+    }
+    th {
+      color: white;
+      font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+      text-align: center;
+    }
+  </style>
+  <body>
+    <input id="ticket-id" placeholder="New ticket id" />
+    <button id="add-ticket">Add a new ticket</button>
+    <div id="list"></div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+      var sessionObject = {};
 
-    function constructNotesTable(ticket) {
-      const ticketElement = document.getElementById(ticket.ticketName);
-      let tableElement = document.getElementById(`${ticket.ticketName}-table`);
-      const notes = Object.values(ticket.notes).reduce((acc, note) => {
-        if (!isNaN(parseInt(note.ba, 10))) acc.ba.push(parseInt(note.ba, 10));
-        if (!isNaN(parseInt(note.backend, 10))) acc.backend.push(parseInt(note.backend, 10));
-        if (!isNaN(parseInt(note.frontend, 10))) acc.frontend.push(parseInt(note.frontend, 10));
-        if (!isNaN(parseInt(note.tests, 10))) acc.tests.push(parseInt(note.tests, 10));
-        return acc;
-      }, {
-        ba: [],
-        backend: [],
-        frontend: [],
-        tests: [],
+      var [sessionId, userName] = window.location.pathname.split("/").slice(-2);
+      socket.emit("join room", sessionId, userName);
+
+      var list = document.getElementById("list");
+      socket.on("changed", (session) => {
+        constructList(session);
+      });
+      var addTicketButton = document.getElementById("add-ticket");
+      addTicketButton.onclick = () => {
+        var input = document.getElementById("ticket-id");
+        if (input.value) {
+          socket.emit("new ticket", sessionId, input.value, userName);
+        }
+      };
+
+      socket.on("all noted", (ticket) => {
+        constructNotesTable(ticket);
       });
 
-      console.log('=> (: constructNotesTable -> notes', notes)
-      const sum = arr => arr.reduce((acc, val) => acc + val, 0);
-      const average = {
-        ba: sum(notes.ba) / notes.ba.length,
-        backend: sum(notes.backend) / notes.backend.length,
-        frontend: sum(notes.frontend) / notes.frontend.length,
-        tests: sum(notes.tests) / notes.tests.length,
-      }
+      socket.on("validated", (ticket) => {
+        constructNotesValidated(ticket);
+      });
 
-      if (!tableElement) {
-        tableElement = document.createElement('table');
-        tableElement.id = `${ticket.ticketName}-table`;
-      } else {
-        tableElement.innerHTML = '';
-      }
-      const lineElement = document.createElement('tr');
-      lineElement.id = 'titres';
-      const nickNameElement = document.createElement('th');
-      nickNameElement.innerText = 'NickName';
-      lineElement.appendChild(nickNameElement);
-      const baTitleElement = document.createElement('th');
-      baTitleElement.innerText = 'rating BA';
-      lineElement.appendChild(baTitleElement);
-      const beTitleElement = document.createElement('th');
-      beTitleElement.innerText = 'rating Backend';
-      lineElement.appendChild(beTitleElement);
-      const feTitleElement = document.createElement('th');
-      feTitleElement.innerText = 'rating FrontEnd';
-      lineElement.appendChild(feTitleElement);
-      const testsTitleElement = document.createElement('th');
-      testsTitleElement.innerText = 'rating tests';
-      lineElement.appendChild(testsTitleElement);
+      function constructNotesTable(ticket) {
+        const ticketElement = document.getElementById(ticket.ticketName);
+        let tableElement = document.getElementById(
+          `${ticket.ticketName}-table`
+        );
+        const notes = Object.values(ticket.notes).reduce(
+          (acc, note) => {
+            if (!isNaN(parseInt(note.ba, 10)))
+              acc.ba.push(parseInt(note.ba, 10));
+            if (!isNaN(parseInt(note.backend, 10)))
+              acc.backend.push(parseInt(note.backend, 10));
+            if (!isNaN(parseInt(note.frontend, 10)))
+              acc.frontend.push(parseInt(note.frontend, 10));
+            if (!isNaN(parseInt(note.tests, 10)))
+              acc.tests.push(parseInt(note.tests, 10));
+            return acc;
+          },
+          {
+            Ba: [],
+            Backend: [],
+            Frontend: [],
+            Tests: [],
+          }
+        );
 
-      tableElement.appendChild(lineElement);
-      Object.keys(ticket.notes).forEach(nickName => {
-        const { ba, backend, frontend, tests } = ticket.notes[nickName];
-        const lineElement = document.createElement('tr');
-        lineElement.id = nickName;
-        const nickNameElement = document.createElement('td');
-        nickNameElement.innerText = nickName;
+        console.log("=> (: constructNotesTable -> notes", notes);
+        const sum = (arr) => arr.reduce((acc, val) => acc + val, 0);
+        const average = {
+          ba: sum(notes.ba) / notes.ba.length,
+          backend: sum(notes.backend) / notes.backend.length,
+          frontend: sum(notes.frontend) / notes.frontend.length,
+          tests: sum(notes.tests) / notes.tests.length,
+        };
+
+        if (!tableElement) {
+          tableElement = document.createElement("table");
+          tableElement.id = `${ticket.ticketName}-table`;
+        } else {
+          tableElement.innerHTML = "";
+        }
+        const lineElement = document.createElement("tr");
+        lineElement.id = "titres";
+        const nickNameElement = document.createElement("th");
+        nickNameElement.innerText = "NickName";
         lineElement.appendChild(nickNameElement);
-        const baTitleElement = document.createElement('td');
-        baTitleElement.innerText = ba;
+        const baTitleElement = document.createElement("th");
+        baTitleElement.innerText = "Rating BA";
         lineElement.appendChild(baTitleElement);
-        const beTitleElement = document.createElement('td');
-        beTitleElement.innerText = backend;
+        const beTitleElement = document.createElement("th");
+        beTitleElement.innerText = "Rating Backend";
         lineElement.appendChild(beTitleElement);
-        const feTitleElement = document.createElement('td');
-        feTitleElement.innerText = frontend;
+        const feTitleElement = document.createElement("th");
+        feTitleElement.innerText = "Rating FrontEnd";
         lineElement.appendChild(feTitleElement);
-        const testsTitleElement = document.createElement('td');
-        testsTitleElement.innerText = tests;
+        const testsTitleElement = document.createElement("th");
+        testsTitleElement.innerText = "Rating tests";
         lineElement.appendChild(testsTitleElement);
 
         tableElement.appendChild(lineElement);
-      });
+        Object.keys(ticket.notes).forEach((nickName) => {
+          const { ba, backend, frontend, tests } = ticket.notes[nickName];
+          const lineElement = document.createElement("tr");
+          lineElement.id = nickName;
+          const nickNameElement = document.createElement("td");
+          nickNameElement.innerText = nickName;
+          lineElement.appendChild(nickNameElement);
+          const baTitleElement = document.createElement("td");
+          baTitleElement.innerText = ba;
+          lineElement.appendChild(baTitleElement);
+          const beTitleElement = document.createElement("td");
+          beTitleElement.innerText = backend;
+          lineElement.appendChild(beTitleElement);
+          const feTitleElement = document.createElement("td");
+          feTitleElement.innerText = frontend;
+          lineElement.appendChild(feTitleElement);
+          const testsTitleElement = document.createElement("td");
+          testsTitleElement.innerText = tests;
+          lineElement.appendChild(testsTitleElement);
 
-      ticketElement.appendChild(tableElement);
+          tableElement.appendChild(lineElement);
+        });
 
-      const lineAverageElement = document.createElement('tr');
-      lineAverageElement.id = 'average';
-      const nickNameAvElement = document.createElement('td');
-      nickNameAvElement.innerText = 'average';
-      lineAverageElement.appendChild(nickNameAvElement);
-      const baAvTitleElement = document.createElement('td');
-      lineAverageElement.appendChild(baAvTitleElement);
-      const beAvTitleElement = document.createElement('td');
-      lineAverageElement.appendChild(beAvTitleElement);
-      const feAvTitleElement = document.createElement('td');
-      lineAverageElement.appendChild(feAvTitleElement);
-      const testsAvTitleElement = document.createElement('td');
-      lineAverageElement.appendChild(testsAvTitleElement);
+        ticketElement.appendChild(tableElement);
 
-      if (userName === ticket.admin) {
-        var ratingBAInput = document.createElement('input');
-        ratingBAInput.placeholder = "rating BA validated";
-        ratingBAInput.id = `${ticket.ticketName}-ba-validated`;
-        ratingBAInput.type = "number";
-        ratingBAInput.value = average.ba;
-        baAvTitleElement.appendChild(ratingBAInput);
+        const lineAverageElement = document.createElement("tr");
+        lineAverageElement.id = "average";
+        const nickNameAvElement = document.createElement("td");
+        nickNameAvElement.innerText = "average";
+        lineAverageElement.appendChild(nickNameAvElement);
+        const baAvTitleElement = document.createElement("td");
+        lineAverageElement.appendChild(baAvTitleElement);
+        const beAvTitleElement = document.createElement("td");
+        lineAverageElement.appendChild(beAvTitleElement);
+        const feAvTitleElement = document.createElement("td");
+        lineAverageElement.appendChild(feAvTitleElement);
+        const testsAvTitleElement = document.createElement("td");
+        lineAverageElement.appendChild(testsAvTitleElement);
 
-        var ratingBackEndInput = document.createElement('input');
-        ratingBackEndInput.id = `${ticket.ticketName}-backend-validated`;
-        ratingBackEndInput.placeholder = "rating Backend validated";
-        ratingBackEndInput.type = "number";
-        ratingBackEndInput.value = average.backend;
-        beAvTitleElement.appendChild(ratingBackEndInput);
+        if (userName === ticket.admin) {
+          var ratingBAInput = document.createElement("input");
+          ratingBAInput.placeholder = "Rating BA validated";
+          ratingBAInput.id = `${ticket.ticketName}-ba-validated`;
+          ratingBAInput.type = "number";
+          ratingBAInput.value = average.ba;
+          baAvTitleElement.appendChild(ratingBAInput);
 
-        var ratingFrontEndInput = document.createElement('input');
-        ratingFrontEndInput.id = `${ticket.ticketName}-frontend-validated`;
-        ratingFrontEndInput.placeholder = "rating Frontend validated";
-        ratingFrontEndInput.type = "number";
-        ratingFrontEndInput.value = average.frontend;
-        feAvTitleElement.appendChild(ratingFrontEndInput);
+          var ratingBackEndInput = document.createElement("input");
+          ratingBackEndInput.id = `${ticket.ticketName}-backend-validated`;
+          ratingBackEndInput.placeholder = "Rating Backend validated";
+          ratingBackEndInput.type = "number";
+          ratingBackEndInput.value = average.backend;
+          beAvTitleElement.appendChild(ratingBackEndInput);
 
-        var ratingTestsInput = document.createElement('input');
-        ratingTestsInput.id = `${ticket.ticketName}-tests-validated`;
-        ratingTestsInput.placeholder = "rating Tests validated";
-        ratingTestsInput.type = "number";
-        ratingTestsInput.value = average.tests;
-        testsAvTitleElement.appendChild(ratingTestsInput);
+          var ratingFrontEndInput = document.createElement("input");
+          ratingFrontEndInput.id = `${ticket.ticketName}-frontend-validated`;
+          ratingFrontEndInput.placeholder = "Rating Frontend validated";
+          ratingFrontEndInput.type = "number";
+          ratingFrontEndInput.value = average.frontend;
+          feAvTitleElement.appendChild(ratingFrontEndInput);
 
-        var validateRatingButton = document.createElement('button');
-        validateRatingButton.innerHTML = "Validate notes";
-        validateRatingButton.onclick = () => {
-          var notes = {
-            ba: document.getElementById(`${ticket.ticketName}-ba-validated`).value,
-            backend: document.getElementById(`${ticket.ticketName}-backend-validated`).value,
-            frontend: document.getElementById(`${ticket.ticketName}-frontend-validated`).value,
-            tests: document.getElementById(`${ticket.ticketName}-tests-validated`).value,
+          var ratingTestsInput = document.createElement("input");
+          ratingTestsInput.id = `${ticket.ticketName}-tests-validated`;
+          ratingTestsInput.placeholder = "Rating Tests validated";
+          ratingTestsInput.type = "number";
+          ratingTestsInput.value = average.tests;
+          testsAvTitleElement.appendChild(ratingTestsInput);
+
+          var validateRatingButton = document.createElement("button");
+          validateRatingButton.innerHTML = "Validate notes";
+          validateRatingButton.onclick = () => {
+            var notes = {
+              ba: document.getElementById(`${ticket.ticketName}-ba-validated`)
+                .value,
+              backend: document.getElementById(
+                `${ticket.ticketName}-backend-validated`
+              ).value,
+              frontend: document.getElementById(
+                `${ticket.ticketName}-frontend-validated`
+              ).value,
+              tests: document.getElementById(
+                `${ticket.ticketName}-tests-validated`
+              ).value,
+            };
+            socket.emit("validate notes", sessionId, ticket.ticketName, notes);
           };
-          socket.emit('validate notes', sessionId, ticket.ticketName, notes);
-        };
-        ticketElement.appendChild(validateRatingButton);
-      } else {
-        baAvTitleElement.innerText = average.ba;
-        beAvTitleElement.innerText = average.backend;
-        feAvTitleElement.innerText = average.frontend;
-        testsAvTitleElement.innerText = average.tests;
+          ticketElement.appendChild(validateRatingButton);
+        } else {
+          baAvTitleElement.innerText = average.ba;
+          beAvTitleElement.innerText = average.backend;
+          feAvTitleElement.innerText = average.frontend;
+          testsAvTitleElement.innerText = average.tests;
+        }
+
+        tableElement.appendChild(lineAverageElement);
       }
 
-      tableElement.appendChild(lineAverageElement);
-    }
+      function constructNotesValidated(ticket) {
+        const summaryElement = document.getElementById(
+          `${ticket.ticketName}-summary`
+        );
+        summaryElement.innerHTML = ` ba: ${ticket.validatedNotes.ba} backend: ${ticket.validatedNotes.backend} frontend: ${ticket.validatedNotes.frontend} tests: ${ticket.validatedNotes.tests} `;
+      }
 
-    function constructNotesValidated(ticket) {
-      const summaryElement = document.getElementById(`${ticket.ticketName}-summary`);
-      summaryElement.innerHTML = ` ba: ${ticket.validatedNotes.ba} backend: ${ticket.validatedNotes.backend} frontend: ${ticket.validatedNotes.frontend} tests: ${ticket.validatedNotes.tests} `;
-    }
+      function constructList(session) {
+        list.innerHTML = "";
+        session.tickets.map((ticket) => {
+          var ticketElement = document.createElement("details");
+          ticketElement.id = ticket.ticketName;
+          var summary = document.createElement("summary");
+          summary.innerText = ticket.ticketName;
+          const summaryNotes = document.createElement("div");
+          summaryNotes.id = `${ticket.ticketName}-summary`;
+          summary.appendChild(summaryNotes);
+          ticketElement.appendChild(summary);
 
-    function constructList(session) {
-      list.innerHTML = '';
-      session.tickets.map(ticket => {
-        var ticketElement = document.createElement('details');
-        ticketElement.id = ticket.ticketName;
-        var summary = document.createElement('summary');
-        summary.innerText = ticket.ticketName;
-        const summaryNotes = document.createElement('div');
-        summaryNotes.id = `${ticket.ticketName}-summary`;
-        summary.appendChild(summaryNotes);
-        ticketElement.appendChild(summary);
+          const ratings = document.createElement("div");
+          var sel = document.createElement("select");
+          var opt1 = document.createElement("option");
+          var opt2 = document.createElement("option");
+          var opt3 = document.createElement("option");
+          var opt5 = document.createElement("option");
+          var opt8 = document.createElement("option");
+          var opt13 = document.createElement("option");
+          ratings.appendChild(sel);
 
-        var sel = document.createElement("select");
-            var opt1 = document.createElement("option");
-            var opt2 = document.createElement("option");
-            var opt3 = document.createElement("option");
-            var opt5 = document.createElement("option");
-            var opt8 = document.createElement("option");
-            var opt13 = document.createElement("option");
+          opt1.value = "1";
+          opt1.text = "1";
+          opt2.value = "2";
+          opt2.text = "2";
+          opt3.value = "3";
+          opt3.text = "3";
+          opt5.value = "5";
+          opt5.text = "5";
+          opt8.value = "8";
+          opt8.text = "8";
+          opt13.value = "13";
+          opt13.text = "13";
 
-            opt1.value = "1";
-            opt1.text = "1";
-            opt2.value = "2";
-            opt2.text = "2";
-            opt3.value = "3";
-            opt3.text = "3";
-            opt5.value = "5";
-            opt5.text = "5";
-            opt8.value = "8";
-            opt8.text = "8";
-            opt13.value = "13";
-            opt13.text = "13";
+          sel.add(opt1, null);
+          sel.add(opt2, null);
+          sel.add(opt3, null);
+          sel.add(opt5, null);
+          sel.add(opt8, null);
+          sel.add(opt13, null);
+          ticketElement.appendChild(sel);
 
-            sel.add(opt1, null);
-            sel.add(opt2, null);
-            sel.add(opt3, null);
-            sel.add(opt5, null);
-            sel.add(opt8, null);
-            sel.add(opt13, null);
-            ticketElement.appendChild(sel);
+          var ratingBAInput = document.createElement("input");
+          ratingBAInput.placeholder = "Rating BA in hours";
+          ratingBAInput.type = "number";
+          ratingBAInput.id = `${ticket.ticketName}-ba`;
+          ticketElement.appendChild(ratingBAInput);
 
-        var ratingBAInput = document.createElement('input');
-        ratingBAInput.placeholder = "rating BA in hours";
-        ratingBAInput.type = "number";
-        ratingBAInput.id = `${ticket.ticketName}-ba`;
-        ticketElement.appendChild(ratingBAInput);
+          var ratingBackEndInput = document.createElement("input");
+          ratingBackEndInput.id = `${ticket.ticketName}-backend`;
+          ratingBackEndInput.placeholder = "Rating Backend in hours";
+          ratingBackEndInput.type = "number";
+          ticketElement.appendChild(ratingBackEndInput);
 
-        var ratingBackEndInput = document.createElement('input');
-        ratingBackEndInput.id = `${ticket.ticketName}-backend`;
-        ratingBackEndInput.placeholder = "rating Backend in hours";
-        ratingBackEndInput.type = "number";
-        ticketElement.appendChild(ratingBackEndInput);
+          var ratingFrontEndInput = document.createElement("input");
+          ratingFrontEndInput.id = `${ticket.ticketName}-frontend`;
+          ratingFrontEndInput.placeholder = "Rating Frontend in hours";
+          ratingFrontEndInput.type = "number";
+          ticketElement.appendChild(ratingFrontEndInput);
 
-        var ratingFrontEndInput = document.createElement('input');
-        ratingFrontEndInput.id = `${ticket.ticketName}-frontend`;
-        ratingFrontEndInput.placeholder = "rating Frontend in hours";
-        ratingFrontEndInput.type = "number";
-        ticketElement.appendChild(ratingFrontEndInput);
+          var ratingTestsInput = document.createElement("input");
+          ratingTestsInput.id = `${ticket.ticketName}-tests`;
+          ratingTestsInput.placeholder = "Rating Tests in hours";
+          ratingTestsInput.type = "number";
+          ticketElement.appendChild(ratingTestsInput);
 
-        var ratingTestsInput = document.createElement('input');
-        ratingTestsInput.id = `${ticket.ticketName}-tests`;
-        ratingTestsInput.placeholder = "rating Tests in hours";
-        ratingTestsInput.type = "number";
-        ticketElement.appendChild(ratingTestsInput);
+          var validateRatingButton = document.createElement("button");
+          validateRatingButton.innerHTML = "Propose notes";
+          validateRatingButton.onclick = (event) => {
+            var notes = {
+              ba: document.getElementById(`${ticket.ticketName}-ba`).value,
+              backend: document.getElementById(`${ticket.ticketName}-backend`)
+                .value,
+              frontend: document.getElementById(`${ticket.ticketName}-frontend`)
+                .value,
+              tests: document.getElementById(`${ticket.ticketName}-tests`)
+                .value,
+            };
+            socket.emit(
+              "add notes",
+              sessionId,
+              ticket.ticketName,
+              userName,
+              notes
+            );
+          };
+          ticketElement.appendChild(validateRatingButton);
 
-        var validateRatingButton = document.createElement('button');
-        validateRatingButton.innerHTML = "Propose notes";
-        validateRatingButton.onclick = (event) => {
-          var notes = {
-            ba: document.getElementById(`${ticket.ticketName}-ba`).value,
-            backend: document.getElementById(`${ticket.ticketName}-backend`).value,
-            frontend: document.getElementById(`${ticket.ticketName}-frontend`).value,
-            tests: document.getElementById(`${ticket.ticketName}-tests`).value,
+          list.appendChild(ticketElement);
+          if (ticket.status === "allNoted") {
+            constructNotesTable(ticket);
+          } else if (ticket.status === "validated") {
+            constructNotesTable(ticket);
+            constructNotesValidated(ticket);
           }
-          socket.emit('add notes', sessionId, ticket.ticketName, userName, notes)
-        }
-        ticketElement.appendChild(validateRatingButton);
-
-        list.appendChild(ticketElement);
-        if (ticket.status === 'allNoted') {
-          constructNotesTable(ticket)
-        } else if (ticket.status === 'validated') {
-          constructNotesTable(ticket)
-          constructNotesValidated(ticket);
-        }
-      })
-    }
-    if (sessionId) {
-      fetch('/api/session/' + sessionId)
-        .then(resp => resp.json())
-        .then(({ session }) => {
-          sessionObject = session;
-          if (!session) window.location.assign('/');
-          constructList(session);
         });
-    }
-  </script>
-</body>
-
+      }
+      if (sessionId) {
+        fetch("/api/session/" + sessionId)
+          .then((resp) => resp.json())
+          .then(({ session }) => {
+            sessionObject = session;
+            if (!session) window.location.assign("/");
+            constructList(session);
+          });
+      }
+    </script>
+  </body>
 </html>
