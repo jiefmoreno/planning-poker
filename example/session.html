@@ -12,6 +12,7 @@
 
   <input id="ticket-id" placeholder="new ticket id" />
   <button id="add-ticket">add a new ticket</button>
+  <div id="users"></div>
   <div id="list"></div>
   <script src="/socket.io/socket.io.js"></script>
   <script>
@@ -46,6 +47,14 @@
       constructNotesTable(ticket, false);
       constructNotesValidated(ticket);
     });
+
+    socket.on('user joined', constructUsersList);
+    socket.on('user left', constructUsersList);
+
+    function constructUsersList(users) {
+      const usersElement = document.getElementById("users");
+      usersElement.innerText = users.join(', ');
+    }
 
     function constructNotesTable(ticket, toValidate) {
       const ticketElement = document.getElementById(`${ticket.ticketName}-content`);
@@ -86,7 +95,7 @@
       nickNameElement.innerText = 'NickName';
       lineElement.appendChild(nickNameElement);
       const complexityTitleElement = document.createElement('th');
-      complexityTitleElement.innerText = 'rating BA';
+      complexityTitleElement.innerText = 'complexity';
       const baTitleElement = document.createElement('th');
       baTitleElement.innerText = 'rating BA';
       lineElement.appendChild(baTitleElement);

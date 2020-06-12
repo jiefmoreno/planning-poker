@@ -13,14 +13,30 @@ interface Session {
 export function init(io: any): (sessionId: string) => Session {
   io.on('connection', (socket) => {
     socket.on('disconnect', () => {
+      if (socket.room && sessions[socket.room] && socket.nickName) {
+        sessions[socket.room].users = sessions[socket.room]
+          .users
+          .filter(userName => userName !== socket.nickName);
+
+        io
+          .sockets
+          .to(socket.room)
+          .emit('user left', sessions[socket.room].users);
+      }
     });
     socket.on('new session', (sessionName) => {
       if (sessions[sessionName]) return;
-      sessions[sessionName] = { tickets: [] };
+      sessions[sessionName] = { tickets: [], users: [] };
     });
     socket.on('join room', (sessionName, userName) => {
       socket.join(sessionName);
       socket.nickName = userName;
+      socket.room = sessionName;
+      sessions[sessionName] && sessions[sessionName].users.push(userName);
+      sessions[sessionName] && io
+        .sockets
+        .to(socket.room)
+        .emit('user joined', sessions[sessionName].users);
     });
     socket.on('new ticket', (sessionId, ticketName, userName) => {
       if (
@@ -35,8 +51,8 @@ export function init(io: any): (sessionId: string) => Session {
       const ticket = sessions[sessionId].tickets.find(({ ticketName: name }) => name === ticketName);
       if (ticket) {
         ticket.notes[userName] = notes;
-        const room = io.sockets.adapter.rooms[sessionId];
-        if (room.length <= Object.keys(ticket.notes).length) {
+        // const room = io.sockets.adapter.rooms[sessionId];
+        if (sessions[sessionId].users.length <= Object.keys(ticket.notes).length) {
           ticket.status = 'allNoted';
           io.sockets.to(sessionId).emit('all noted', {
             ...ticket,
