@@ -35,6 +35,13 @@ function init(io) {
                 }
             }
         });
+        socket.on('force stop notation', (sessionId, ticketName) => {
+            const ticket = sessions[sessionId].tickets.find(({ ticketName: name }) => name === ticketName);
+            if (ticket) {
+                ticket.status = 'allNoted';
+                io.sockets.to(sessionId).emit('all noted', Object.assign(Object.assign({}, ticket), { sessionId }));
+            }
+        });
         socket.on('validate notes', (sessionId, ticketName, notes) => {
             const ticket = sessions[sessionId].tickets.find(({ ticketName: name }) => name === ticketName);
             if (ticket && ticket.admin === socket.nickName) {

@@ -265,6 +265,17 @@
         const summaryNotes = document.createElement('div');
         summaryNotes.id = `${ticket.ticketName}-summary`;
         summary.appendChild(summaryNotes);
+        if (ticket.status === 'inProgress') {
+          const stopNotation = document.createElement('button');
+          stopNotation.innerText = 'Stop notation';
+          stopNotation.style.margin = '0.2rem';
+          stopNotation.onclick = event => {
+            socket.emit('force stop notation', sessionId, ticket.ticketName);
+            event.target.style.display = "none";
+          };
+          summaryNotes.appendChild(stopNotation);
+        }
+
         ticketElement.appendChild(summary);
         var content = document.createElement('div');
         content.id = `${ticket.ticketName}-content`;
