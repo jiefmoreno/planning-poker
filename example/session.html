@@ -96,6 +96,7 @@
       lineElement.appendChild(nickNameElement);
       const complexityTitleElement = document.createElement('th');
       complexityTitleElement.innerText = 'complexity';
+      lineElement.appendChild(complexityTitleElement);
       const baTitleElement = document.createElement('th');
       baTitleElement.innerText = 'rating BA';
       lineElement.appendChild(baTitleElement);
@@ -274,7 +275,7 @@
         const summaryNotes = document.createElement('div');
         summaryNotes.id = `${ticket.ticketName}-summary`;
         summary.appendChild(summaryNotes);
-        if (ticket.status === 'inProgress') {
+        if (userName === ticket.admin && ticket.status === 'inProgress') {
           const stopNotation = document.createElement('button');
           stopNotation.innerText = 'Stop notation';
           stopNotation.style.margin = '0.2rem';
