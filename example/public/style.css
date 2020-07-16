@@ -97,3 +97,22 @@ td, th {
   background: rgba(255, 255,255, 0.2);
   border: none;
 }
+
+.copy-container {
+position: relative;
+}
+
+.to-copy {
+  /* top: 2px;
+  left: -1px;
+  position: absolute; */
+  background: transparent;
+  border: none;
+  font: 400 13px Arial;
+  color: #043467;
+}
+.to-copy-text {
+  font: 400 13px Arial;
+  margin-left: 1px;
+  color: #043467;
+}

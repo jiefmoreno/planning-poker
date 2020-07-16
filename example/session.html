@@ -11,6 +11,10 @@
 <body>
   <input id="ticket-id" class="input" placeholder="new ticket id" />
   <button id="add-ticket" class="button">add a new ticket</button>
+  <div class="copy-container">
+    <span id="share-session-text" class="to-copy-text"></span>
+    <button onclick="copySessionToClipboard(this)">Copy session</button>
+  </div>
   <div id="users"></div>
   <div id="list"></div>
   <script src="/socket.io/socket.io.js"></script>
@@ -40,7 +44,51 @@
       title: 'dev front',
       type: types.time,
       id: 'frontend'
-    }]
+    }];
+
+    const textToCopy = document.getElementById("share-session-text");
+    textToCopy.innerText = window.location.href.split('/').slice(0, -1).join('/');
+
+    // function copySessionToClipboard() {
+    //   copyText.select();
+    //   copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+    //   document.execCommand("copy");
+    //   /* Alert the copied text */
+    //   alert("Copied the text: " + copyText.value);
+    // }
+
+    function copySessionToClipboard(target) {
+      //check and see if the user had a text selection range
+      let currentRange;
+      if (document.getSelection().rangeCount > 0) {
+        //the user has a text selection range, store it
+        currentRange = document.getSelection().getRangeAt(0);
+        //remove the current selection
+        window.getSelection().removeRange(currentRange);
+      } else {
+        //they didn't have anything selected
+        currentRange = false;
+      }
+      //create a selection range
+      const CopyRange = document.createRange();
+      //choose the element we want to select the text of
+      CopyRange.selectNode(textToCopy);
+      //select the text inside the range
+      window.getSelection().addRange(CopyRange);
+      //copy the text to the clipboard
+      document.execCommand("copy");
+      target.innerText = '✓';
+      setTimeout(() => target.innerText = 'Copy session', 5000)
+
+      //remove our selection range
+      window.getSelection().removeRange(CopyRange);
+
+      //return the old selection range
+      if (currentRange) {
+        window.getSelection().addRange(currentRange);
+      }
+    }
 
 
     var [sessionId, userName] = window.location.pathname.split('/').slice(-2);

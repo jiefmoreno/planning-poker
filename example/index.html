@@ -15,6 +15,12 @@
   <script src="/socket.io/socket.io.js"></script>
   <script>
     var socket = io();
+    var [sessionId] = window.location.pathname.split('/').slice(-1);
+    if (sessionId) {
+      const sessionIdEl = document.getElementById('session-id');
+      sessionIdEl.value = sessionId;
+      sessionIdEl.disabled = true;
+    }
 
     var joinButton = document.getElementById('join-session');
     joinButton.onclick = () => {
