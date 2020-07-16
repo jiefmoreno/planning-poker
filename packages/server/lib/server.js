@@ -35,16 +35,25 @@ function init(io) {
         socket.on('new ticket', (sessionId, ticketName, userName) => {
             if (sessions[sessionId] &&
                 !sessions[sessionId].tickets.find(({ ticketName: name }) => name === ticketName)) {
-                sessions[sessionId].tickets.push({ ticketName, notes: {}, status: 'inProgress', admin: userName });
+                const notes = sessions[socket.room].users.reduce((acc, user) => (Object.assign(Object.assign({}, acc), { [user]: null })), {});
+                sessions[sessionId].tickets.push({ ticketName, notes, status: 'inProgress', admin: userName });
                 io.sockets.to(sessionId).emit('changed', sessions[sessionId]);
             }
         });
-        socket.on('add notes', (sessionId, ticketName, userName, notes) => {
+        socket.on('add notes', ({ sessionId, ticketName, userName, notes }) => {
             const ticket = sessions[sessionId].tickets.find(({ ticketName: name }) => name === ticketName);
             if (ticket) {
                 ticket.notes[userName] = notes;
                 // const room = io.sockets.adapter.rooms[sessionId];
-                if (sessions[sessionId].users.length <= Object.keys(ticket.notes).length) {
+                if (Object.values(ticket.notes).find(notes => !notes) === null) {
+                    console.log('=> (: ticketName, userName, notes', ticketName, userName, notes);
+                    io.sockets.to(sessionId).emit('user noted', {
+                        ticketName,
+                        userName,
+                    });
+                }
+                else {
+                    console.log('=> (: all noted');
                     ticket.status = 'allNoted';
                     io.sockets.to(sessionId).emit('all noted', Object.assign(Object.assign({}, ticket), { sessionId }));
                 }
@@ -57,7 +66,7 @@ function init(io) {
                 io.sockets.to(sessionId).emit('all noted', Object.assign(Object.assign({}, ticket), { sessionId }));
             }
         });
-        socket.on('validate notes', (sessionId, ticketName, notes) => {
+        socket.on('validate notes', ({ sessionId, ticketName, notes }) => {
             const ticket = sessions[sessionId].tickets.find(({ ticketName: name }) => name === ticketName);
             if (ticket && ticket.admin === socket.nickName) {
                 ticket.validatedNotes = notes;

@@ -9,12 +9,13 @@
 </head>
 
 <body>
-  <input id="session-id" placeholder="session name" />
-  <input id="user-name" placeholder="user name" />
-  <button id="join-session">join session</button>
+  <input id="session-id" class="input" placeholder="session name" />
+  <input id="user-name" class="input" placeholder="user name" />
+  <button id="join-session" class="button">join session</button>
   <script src="/socket.io/socket.io.js"></script>
   <script>
     var socket = io();
+
     var joinButton = document.getElementById('join-session');
     joinButton.onclick = () => {
       var sessionInput = document.getElementById('session-id');

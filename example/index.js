@@ -9,6 +9,9 @@ const path = require('path')
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
+app.get('/session/:sessionId', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
 app.get('/session/:sessionId/:userName', (req, res) => {
   res.sendFile(__dirname + '/session.html');
 });
