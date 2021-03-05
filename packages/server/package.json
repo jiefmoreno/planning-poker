@@ -33,5 +33,11 @@
   "bugs": {
     "url": "https://github.com/jiefmoreno/planning-poker/issues"
   },
-  "gitHead": "d6ab0cf2ce88dead9e51a9d7be12d3024e34c53c"
+  "gitHead": "d6ab0cf2ce88dead9e51a9d7be12d3024e34c53c",
+  "dependencies": {
+    "sanitize-html": "^2.3.2"
+  },
+  "devDependencies": {
+    "typescript": "^4.2.2"
+  }
 }

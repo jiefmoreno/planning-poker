@@ -1,111 +1,11 @@
 body {
-  background-color: #009999;
+  padding: 10px;
 }
-.input {
-  border: 0.2rem solid white;
-  border-radius: 1rem;
-  height: 1.5rem;
-  text-align: center;
-  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-  margin: 0.5rem;
-  background-color: #d1e0e0;
-}
-.button {
-  border: 0.2rem solid #a3c2c2;
-  border-radius: 1rem;
-  height: 2rem;
-  background-color: #a3c2c2;
-  width: 8rem;
-  text-align: center;
-  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-  color: #334d4d;
-  cursor: pointer;
-}
-
-.button-table {
-  cursor: pointer;
-  background-color: transparent;
-  border: none;
-}
-
-.select {
-  margin: 0.5rem;
-  text-align: center;
-  border-radius: 1rem;
-  height: 2rem;
-  border: 0.2rem solid white;
-  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-  background-color: #d1e0e0;
-  cursor: pointer;
-}
-
-summary {
-  padding: 0.5rem;
-  cursor: pointer;
-  background-color: #006666;
-  color: white;
-  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-}
-details {
-  margin: 0.3rem;
-  background-color: #017e7e;
-}
-
-table {
-  color: white;
-  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-  text-align: center;
-}
-th {
-  color: white;
-  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-  text-align: center;
-}
-td {
-  padding: 5px;
-}
-
-@keyframes loading {
-  0% {width: 0;}
-  50% {width: 48px;}
-  100% {width: 0;}
-}
-.loader {
-  width: 0;
-  animation-name: loading;
-  animation-duration: 2s;
-  animation-iteration-count: infinite;
-  overflow: hidden;
-  margin-left: calc(50% - 48px);
-}
-
-table, td, th {
-  border: 1px solid white;
-  border-collapse: collapse;
-}
-td, th {
-  padding: 5px;
-  width: 150px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.table input, .table select {
-  width: 50px;
-  height: 25px;
-  background: rgba(255, 255,255, 0.2);
-  border: none;
-}
-
 .copy-container {
 position: relative;
 }
 
 .to-copy {
-  /* top: 2px;
-  left: -1px;
-  position: absolute; */
   background: transparent;
   border: none;
   font: 400 13px Arial;
@@ -115,4 +15,15 @@ position: relative;
   font: 400 13px Arial;
   margin-left: 1px;
   color: #043467;
+}
+
+#users > span {
+  margin: 5px;
+}
+
+#alert {
+  position: fixed;
+  bottom: 5px;
+  left: 5px;
+  z-index: 2;
 }

@@ -6,20 +6,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>session</title>
   <link rel="stylesheet" href="/static/style.css" type="text/css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 
 <body>
-  <input id="ticket-id" class="input" placeholder="new ticket id" />
-  <button id="add-ticket" class="button">add a new ticket</button>
-  <div class="copy-container">
-    <span id="share-session-text" class="to-copy-text"></span>
-    <button onclick="copySessionToClipboard(this)">Copy session</button>
+  <div class="container">
+    <div id="alert"></div>
+    <div class="input-group mb-3">
+      <input type="text" id="ticket-id" placeholder="new ticket id" class="form-control"
+        placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
+      <div class="input-group-append">
+        <button id="add-ticket" class="btn btn-outline-secondary" type="button">Button</button>
+      </div>
+    </div>
+    <div class="copy-container">
+      <span id="share-session-text" class="to-copy-text"></span>
+      <button class="btn btn-secondary" onclick="copySessionToClipboard(this)">Copy session</button>
+    </div>
+    <div id="users"></div>
+    <div id="tickets"></div>
   </div>
-  <div id="users"></div>
-  <div id="list"></div>
-  <script src="/socket.io/socket.io.js"></script>
 
+  <script src="/socket.io/socket.io.js"></script>
   <script src="/static/construct.js"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+
   <script>
     var socket = io();
     var sessionObject = {};
@@ -48,15 +68,6 @@
 
     const textToCopy = document.getElementById("share-session-text");
     textToCopy.innerText = window.location.href.split('/').slice(0, -1).join('/');
-
-    // function copySessionToClipboard() {
-    //   copyText.select();
-    //   copyText.setSelectionRange(0, 99999); /*For mobile devices*/
-
-    //   document.execCommand("copy");
-    //   /* Alert the copied text */
-    //   alert("Copied the text: " + copyText.value);
-    // }
 
     function copySessionToClipboard(target) {
       //check and see if the user had a text selection range
@@ -95,9 +106,7 @@
     socket.emit('join room', sessionId, userName);
 
     var list = document.getElementById('list');
-    socket.on('changed', session => {
-      constructList(session);
-    });
+
     var addTicketButton = document.getElementById('add-ticket');
     addTicketButton.onclick = () => {
       var input = document.getElementById('ticket-id');
@@ -106,66 +115,12 @@
       }
     }
 
-    socket.on('all noted', ticket => {
-      const contentElement = document.getElementById(`${ticket.ticketName}-content`);
-      const stopNotationElement = document.getElementById('stopNotation');
-      stopNotationElement && stopNotationElement.parentNode.removeChild(stopNotationElement);
-
-      contentElement.innerHTML = "";
-      contentElement.appendChild(constructAllNotedTicket(ticket));
-    });
-
-    socket.on('user noted', ({ ticketName, userName }) => {
-      const rowElement = document.getElementById(`${ticketName}-${userName}-note`);
-      rowElement.innerHTML = "";
-      rowElement.appendChild(
-        constructWaitingForResponsesList(
-          userName, true, `${ticketName}-${userName}-note`
-        )
-      );
-    });
-
-    socket.on('validated', ticket => {
-      const contentElement = document.getElementById(`${ticket.ticketName}-content`);
-      const summaryNotes = document.getElementById(`${ticket.ticketName}-summary`);
-
-      contentElement.innerHTML = "";
-      contentElement.appendChild(constructValidatedTicket(ticket));
-      summaryNotes.innerHTML = getSummaryNotes(ticket);
-    });
-
-    socket.on('user joined', constructUsersList);
-    socket.on('user left', constructUsersList);
-
-    function constructList(session) {
-      list.innerHTML = '';
-      session.tickets.forEach((ticket, index) => {
-        var ticketElement = document.createElement('details');
-        ticketElement.id = ticket.ticketName;
-        ticketElement.open = ticket.status !== 'validated';
-        const summary = constructTicketHeader(ticket);
-
-        ticketElement.appendChild(summary);
-        var content = document.createElement('div');
-        content.id = `${ticket.ticketName}-content`;
-        content.className = "ticket-content";
-        ticketElement.appendChild(content);
-
-        switch (ticket.status) {
-          case 'inProgress':
-            content.appendChild(constructInProgressTicket(ticket));
-            break;
-          case 'allNoted':
-            content.appendChild(constructAllNotedTicket(ticket));
-            break;
-          case 'validated':
-            content.appendChild(constructValidatedTicket(ticket));
-            break;
-        }
-
-        list.insertBefore(ticketElement, list.childNodes[0]);
-      });
-    }
+    socket.on('ticket added', addTicket);
+    socket.on('all noted', allNoted);
+    socket.on('user noted', userNoted);
+    socket.on('validated', ticketValidated);
+    socket.on('user joined', appendUser);
+    socket.on('user left', removeUser);
 
     if (sessionId) {
       fetch('/api/session/' + sessionId)
@@ -173,7 +128,6 @@
         .then(({ session }) => {
           sessionObject = session;
           if (!session) window.location.assign('/');
-          constructList(session);
         });
     }
   </script>

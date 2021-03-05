@@ -2,7 +2,8 @@ const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
-const getSession = require('@planning-poker/server').init(io);
+const templates = require('./templates');
+const getSession = require('@planning-poker/server').init(io, templates);
 const path = require('path')
 
 
