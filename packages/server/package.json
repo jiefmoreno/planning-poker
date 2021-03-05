@@ -1,6 +1,6 @@
 {
   "name": "@planning-poker/server",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A tool that handle planning poker in node.js",
   "keywords": [
     "planning",
