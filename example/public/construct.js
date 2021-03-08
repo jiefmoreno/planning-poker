@@ -65,6 +65,7 @@ function allNoted({ admin, ticketName }, render) {
     document.getElementById(`${ticketName.trim()}-stop`).remove();
 
     submitEl.innerText = 'Validate';
+    formEl.reset();
     formEl.onsubmit = event => {
       event.preventDefault();
       let ticketName;
@@ -90,9 +91,7 @@ function ticketValidated({ ticketName }, render) {
   const tbodyValidatedEl = document.getElementById(`${ticketName.trim()}-validated-tbody`);
   const collapseControldEl = document.getElementById(`${ticketName.trim()}-collapse`);
 
-
-
   tbodyEl.insertAdjacentHTML('beforeend', render);
   tbodyValidatedEl.insertAdjacentHTML('beforeend', render);
-  collapseControldEl.classList.remove("show");;
+  collapseControldEl.classList.remove("show");
 }

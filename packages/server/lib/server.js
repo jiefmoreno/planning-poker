@@ -75,11 +75,6 @@ function init(io, templates) {
                     ? sanitizeHtml(templates.newTicket(newTicket))
                     : '';
                 sessions[sessionId].tickets.push(newTicket);
-                // io.sockets.to(sessionId).emit(
-                //   'changed',
-                //   sessions[sessionId],
-                //   renderHtml
-                // );
                 io.sockets.to(sessionId).emit('ticket added', newTicket, renderHtml);
             }
         });
@@ -105,6 +100,8 @@ function init(io, templates) {
                 else {
                     ticket.status = 'allNoted';
                     ticket.average = Object.values(ticket.notes).reduce((acc, note, i, arr) => {
+                        if (!note)
+                            return acc;
                         Object.keys(note).forEach(key => {
                             if (note[key]) {
                                 acc[key] = [...acc[key] || [], parseInt(note[key], 10)];
@@ -126,6 +123,19 @@ function init(io, templates) {
             const ticket = sessions[sessionId].tickets.find(({ ticketName: name }) => name === ticketName);
             if (ticket) {
                 ticket.status = 'allNoted';
+                ticket.average = Object.values(ticket.notes).reduce((acc, note, i, arr) => {
+                    if (!note)
+                        return acc;
+                    Object.keys(note).forEach(key => {
+                        if (note[key]) {
+                            acc[key] = [...acc[key] || [], parseInt(note[key], 10)];
+                        }
+                        if (i === arr.length - 1 && acc[key]) {
+                            acc[key] = acc[key].reduce((acc, val) => acc + val, 0) / acc[key].length;
+                        }
+                    });
+                    return acc;
+                }, {});
                 const renderHtml = (templates === null || templates === void 0 ? void 0 : templates.allNoted)
                     ? sanitizeHtml(templates.allNoted(ticket, sessions[sessionId].tickets))
                     : '';
